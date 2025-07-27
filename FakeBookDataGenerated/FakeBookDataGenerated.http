@@ -1,0 +1,6 @@
+@FakeBookDataGenerated_HostAddress = http://localhost:5097
+
+GET {{FakeBookDataGenerated_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
