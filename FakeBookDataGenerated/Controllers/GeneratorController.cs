@@ -1,3 +1,4 @@
+using FakeBookDataGenerated.Enum;
 using FakeBookDataGenerated.Extension;
 using FakeBookDataGenerated.Model;
 using FakeBookDataGenerated.Service;
@@ -16,11 +17,17 @@ namespace FakeBookDataGenerated.Controllers
             _generatorService = generatorService;
         }
 
-        [HttpGet("{page}")]
-        public IActionResult Get([FromRoute] int page, [FromQuery] BooksOptions booksOptions)
+        [HttpGet("books/{page}")]
+        public IActionResult GetBooks([FromRoute] int page, [FromQuery] BooksOptions booksOptions)
         {
             booksOptions.UpdateSeed(page);
             return Ok(_generatorService.GetFakeBooks(booksOptions, page));
+        }
+
+        [HttpGet("comments/{id}")]
+        public IActionResult GetComments([FromRoute] int id, [FromQuery] int count, [FromQuery] Language language)
+        {
+            return Ok(_generatorService.GetFakeComments(id, count, language));
         }
     }
 }

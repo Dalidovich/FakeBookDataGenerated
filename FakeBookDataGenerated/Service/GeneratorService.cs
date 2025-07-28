@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using FakeBookDataGenerated.Enum;
 using FakeBookDataGenerated.Extension;
 using FakeBookDataGenerated.Model;
 
@@ -13,9 +14,9 @@ namespace FakeBookDataGenerated.Service
 
             var faker = new Faker<FakeBook>(booksOptions.GetLanguageString())
                 .RuleFor(u => u.Id, f => f.IndexFaker + 1 + page * 20)
-                .RuleFor(u => u.Title, f => f.Lorem.Sentence(1, 3))
-                .RuleFor(u => u.Athor, f => f.Name.FirstName())
-                .RuleFor(u => u.Publisher, f => f.Name.FirstName())
+                .RuleFor(u => u.Title, f => string.Join(" ", f.Lorem.Words(f.Random.Number(1, 3))))
+                .RuleFor(u => u.Athor, f => f.Name.FullName())
+                .RuleFor(u => u.Publisher, f => f.Name.LastName())
                 .RuleFor(u => u.Description, f => f.Lorem.Lines(10))
                 .RuleFor(u => u.Likes, (f, u) => u.Likes = (int)booksOptions.AVGLike + (f.Random.Double() < booksOptions.AVGLike % 1 ? 1 : 0))
                 .RuleFor(u => u.Comments, (f, u) => u.Comments = (int)booksOptions.AVGComments + (f.Random.Double() < booksOptions.AVGComments % 1 ? 1 : 0))
@@ -23,6 +24,19 @@ namespace FakeBookDataGenerated.Service
                 .RuleFor(u => u.Image, (f, u) => u.Image = $"https://static.photos/640x360/{f.Random.Number(1000000)}");
 
             return faker.Generate(20);
+        }
+
+        public List<FakeComment> GetFakeComments(int id, int count, Language language)
+        {
+            Randomizer.Seed = new Random(id);
+
+            var faker = new Faker<FakeComment>(LanguageConst.Languages[language])
+                .RuleFor(u => u.Id, (f, u) => u.Id = id)
+                .RuleFor(u => u.Athor, f => f.Name.FullName())
+                .RuleFor(u => u.Content, f => f.Lorem.Sentence(3, 4).Trim('.'));
+
+            return faker.Generate(count);
+
         }
 
         private string GenerateISBN(Faker faker)
